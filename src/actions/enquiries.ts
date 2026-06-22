@@ -32,6 +32,22 @@ export async function submitEnquiry(
   }
 
   const supabase = await createClient();
+
+  const { data: trip, error: tripError } = await supabase
+    .from("trips")
+    .select("id")
+    .eq("id", parsed.data.trip_id)
+    .eq("status", "OPEN")
+    .maybeSingle();
+
+  if (tripError || !trip) {
+    return {
+      status: "error",
+      message: "Choose one of the open trips before sending your note.",
+      errors: { trip_id: ["Choose an open trip"] },
+    };
+  }
+
   const { error } = await supabase.from("leads").insert({
     ...parsed.data,
     preferred_month: `${parsed.data.preferred_month}-01`,

@@ -166,7 +166,15 @@ using (true);
 
 create policy "Public can create leads"
 on public.leads for insert to anon
-with check (status = 'NEW' and owner_id is null);
+with check (
+  status = 'NEW'
+  and owner_id is null
+  and exists (
+    select 1 from public.trips
+    where trips.id = leads.trip_id
+      and trips.status = 'OPEN'
+  )
+);
 
 create policy "Team reads permitted leads"
 on public.leads for select to authenticated

@@ -113,10 +113,18 @@ Requirements: Node.js 20 or newer, pnpm, and a Supabase project.
    - `supabase/migrations/001_initial_schema.sql`
    - `supabase/seed.sql`
 
-5. In Supabase Authentication, create an email/password user. The profile is
-   created automatically by a trigger.
+   The seed file creates trips, leads, call notes, activity logs, and evaluator
+   logins.
 
-6. Promote that user in the SQL editor.
+5. Use one of the seeded logins.
+
+   ```text
+   Admin: admin@thenomichi.test / Nomichi@12345
+   Associate: associate@thenomichi.test / Nomichi@12345
+   ```
+
+6. If you create your own Supabase auth user instead, promote that user in the
+   SQL editor.
 
    ```sql
    update public.profiles
@@ -141,6 +149,14 @@ pnpm build
 
 The repository has been verified with a successful TypeScript check and
 production Next.js build.
+
+## Setup queries and evaluator logins
+
+All SQL needed for the schema, mock data, and admin logins is in:
+
+- `supabase/migrations/001_initial_schema.sql`
+- `supabase/seed.sql`
+- `docs/SETUP_QUERIES.md`
 
 ## Deploying to Vercel
 

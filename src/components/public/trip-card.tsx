@@ -30,7 +30,7 @@ export function TripCard({ trip }: { trip: Trip }) {
         <p className="mt-5 flex-1 text-sm leading-7 text-ink/65">
           {trip.description}
         </p>
-        <a className="button-secondary mt-6" href={`#enquire?trip=${trip.id}`}>
+        <a className="button-secondary mt-6" href={`/?trip=${trip.id}#enquire`}>
           Ask about this trip
         </a>
       </div>

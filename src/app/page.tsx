@@ -6,6 +6,10 @@ import type { Trip } from "@/types/database";
 import { TripCard } from "@/components/public/trip-card";
 import { EnquiryForm } from "@/components/public/enquiry-form";
 
+type SearchParams = Promise<{
+  trip?: string;
+}>;
+
 async function getOpenTrips(): Promise<Trip[]> {
   if (!hasSupabaseEnv) return [];
   const supabase = await createClient();
@@ -19,8 +23,16 @@ async function getOpenTrips(): Promise<Trip[]> {
   return (data ?? []) as Trip[];
 }
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
+  const params = await searchParams;
   const trips = await getOpenTrips();
+  const selectedTripId = trips.some((trip) => trip.id === params.trip)
+    ? params.trip
+    : undefined;
 
   return (
     <main>
@@ -108,7 +120,7 @@ export default async function Home() {
             </p>
           </div>
           {trips.length ? (
-            <EnquiryForm trips={trips} />
+            <EnquiryForm selectedTripId={selectedTripId} trips={trips} />
           ) : (
             <div className="panel grid min-h-72 place-items-center p-8 text-center">
               <p className="max-w-sm text-ink/60">

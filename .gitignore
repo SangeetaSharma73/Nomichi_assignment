@@ -34,3 +34,4 @@ pnpm-debug.log*
 # generated temporary files
 /tmp/
 /.pnpm-store/
+node_modules

@@ -13,7 +13,13 @@ function FieldError({ messages }: { messages?: string[] }) {
   return <p className="mt-1 text-xs text-red-700">{messages[0]}</p>;
 }
 
-export function EnquiryForm({ trips }: { trips: Trip[] }) {
+export function EnquiryForm({
+  selectedTripId,
+  trips,
+}: {
+  selectedTripId?: string;
+  trips: Trip[];
+}) {
   const [state, action, pending] = useActionState(submitEnquiry, initialState);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -71,7 +77,7 @@ export function EnquiryForm({ trips }: { trips: Trip[] }) {
         </label>
         <label>
           <span className="label">Trip</span>
-          <select className="field" defaultValue="" name="trip_id">
+          <select className="field" defaultValue={selectedTripId ?? ""} name="trip_id">
             <option disabled value="">
               Choose a trip
             </option>

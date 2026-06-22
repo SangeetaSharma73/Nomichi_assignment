@@ -47,19 +47,29 @@ export default async function LeadDetailPage({
     ]);
 
   if (!lead) notFound();
+
   const typedLead = lead as LeadWithRelations & { trip: Trip };
   const group = GROUP_TYPES.find((item) => item.value === typedLead.group_type)?.label;
+  const leadNotes =
+    (notes as Array<LeadNote & { author?: { full_name: string; email: string } }> | null) ??
+    [];
+  const activityItems =
+    (activity as Array<ActivityLog & { actor?: { full_name: string; email: string } }> | null) ??
+    [];
 
   return (
     <>
-      <Link className="inline-flex items-center gap-2 text-sm text-ink/50 hover:text-rust" href="/admin/leads">
+      <Link
+        className="inline-flex items-center gap-2 text-sm text-ink/50 hover:text-rust"
+        href="/admin/leads"
+      >
         <ArrowLeft size={16} />
         Back to leads
       </Link>
       <div className="mt-6">
         <PageHeader
           action={<StatusBadge status={typedLead.status} />}
-          description={`${typedLead.trip?.name ?? "Trip enquiry"} · received ${formatDateTime(typedLead.created_at)}`}
+          description={`${typedLead.trip?.name ?? "Trip enquiry"} - received ${formatDateTime(typedLead.created_at)}`}
           eyebrow="Lead detail"
           title={typedLead.name}
         />
@@ -91,7 +101,7 @@ export default async function LeadDetailPage({
               <div className="mt-6 rounded-2xl bg-sand/15 p-5">
                 <p className="font-semibold">{typedLead.trip.name}</p>
                 <p className="mt-1 text-sm text-ink/55">
-                  {typedLead.trip.destination} ·{" "}
+                  {typedLead.trip.destination} -{" "}
                   {formatTripDates(
                     typedLead.trip.start_date,
                     typedLead.trip.end_date,
@@ -115,8 +125,8 @@ export default async function LeadDetailPage({
               <NoteForm leadId={id} />
             </div>
             <div className="mt-8 divide-y divide-ink/10">
-              {(notes as Array<LeadNote & { author?: { full_name: string; email: string } }> | null)?.map(
-                (note) => (
+              {leadNotes.length ? (
+                leadNotes.map((note) => (
                   <div className="py-5" key={note.id}>
                     <div className="flex justify-between gap-4">
                       <p className="text-sm font-semibold">
@@ -135,7 +145,11 @@ export default async function LeadDetailPage({
                       </p>
                     ) : null}
                   </div>
-                ),
+                ))
+              ) : (
+                <p className="py-5 text-sm text-ink/50">
+                  No call notes yet. Add the first touchpoint after you speak to them.
+                </p>
               )}
             </div>
           </article>
@@ -187,18 +201,22 @@ export default async function LeadDetailPage({
           <article className="panel p-6">
             <h2 className="text-lg font-bold">Activity</h2>
             <div className="mt-5 space-y-5">
-              {(activity as Array<ActivityLog & { actor?: { full_name: string; email: string } }> | null)?.map(
-                (item) => (
+              {activityItems.length ? (
+                activityItems.map((item) => (
                   <div className="border-l-2 border-sand pl-4" key={item.id}>
                     <p className="text-sm font-semibold capitalize">
                       {item.action.replaceAll("_", " ")}
                     </p>
                     <p className="mt-1 text-xs text-ink/45">
-                      {item.actor?.full_name || item.actor?.email || "System"} ·{" "}
+                      {item.actor?.full_name || item.actor?.email || "System"} -{" "}
                       {formatDateTime(item.created_at)}
                     </p>
                   </div>
-                ),
+                ))
+              ) : (
+                <p className="text-sm text-ink/50">
+                  No activity has been recorded for this lead yet.
+                </p>
               )}
             </div>
           </article>
